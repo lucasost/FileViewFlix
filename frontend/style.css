@@ -1,0 +1,100 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.file-area {
+    padding: 20px;
+}
+
+img.thumbnail {
+    width: 100px;
+    cursor: pointer;
+}
+
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 1; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.9);
+}
+
+.modal-content {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+video {
+    width: 720px;
+}
+
+.complete-button {
+    display: block;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.complete-button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.completed-directory {
+    background-color: #28a745 !important;
+}
+
+/* Estilo para links do menu */
+.directory-link {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #007BFF;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.directory-link:hover {
+    background-color: #0056b3;
+}
+
+/* Estilo para melhorar a visualização hierárquica */
+.card-body .list-group {
+    margin-left: 20px;
+}
+
+.card-header {
+    padding: 0.75rem 1.25rem;
+    cursor: pointer;
+}
