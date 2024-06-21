@@ -16,34 +16,57 @@
       }
       #files {
         margin-left: 22%;
+        width: 75%;
       }
-      ul {
+      ul,
+      div.list-group {
         list-style: none;
         padding: 0;
       }
-      li {
+      li,
+      a.list-group-item {
         padding: 8px;
         margin-left: 20px;
-      }
-      a {
-        text-decoration: none;
-        color: black;
-      }
-      a:hover {
-        text-decoration: underline;
       }
       .current {
         color: red;
         font-weight: bold;
       }
-      .file-item {
+      .video-container,
+      .thumbnail,
+      .pdf-link {
         margin-bottom: 10px;
       }
-      .video,
+
+      .video-container video,
       .img-thumbnail,
       iframe {
-        max-width: 100%;
+        width: 500px;
         height: auto;
+      }
+      .thumbnail {
+        width: 100px; /* Ajuste conforme necessário */
+      }
+      .speed-selector {
+        margin-top: 5px;
+      }
+      .complete-button {
+        margin-top: 5px;
+      }
+      .video-container,
+      .thumbnail,
+      .pdf-link {
+        margin-bottom: 10px; /* Espaçamento entre elementos */
+      }
+      .video-container {
+        max-width: 640px; /* Limita o tamanho máximo do vídeo */
+      }
+      .video-title {
+        font-size: 18px;
+        margin-bottom: 5px;
+      }
+      .video-test {
+        width: 800px;
       }
     </style>
   </head>
