@@ -282,10 +282,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (allCompleted) {
                 localStorage.setItem(moduleName + "-module", "completed");
-                const moduleLinks = document.querySelectorAll(`#menu a:contains(${moduleName})`);
+                const moduleLinks = document.querySelectorAll("#menu a");
                 moduleLinks.forEach(link => {
-                    link.classList.add('completed');
-                    link.textContent += " ✅"; // Add checkmark icon
+                    if (link.textContent.trim().startsWith(moduleName)) {
+                        link.classList.add('completed');
+                        if (!link.textContent.includes("✅")) {
+                            link.textContent += " ✅"; // Add checkmark icon
+                        }
+                    }
                 });
             }
         }
