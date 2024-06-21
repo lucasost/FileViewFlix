@@ -98,3 +98,20 @@ video {
     padding: 0.75rem 1.25rem;
     cursor: pointer;
 }
+
+
+.remove-complete-button {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.remove-complete-button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
