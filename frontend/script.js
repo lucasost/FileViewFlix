@@ -10,7 +10,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         function createMenu(items) {
             const ul = document.createElement("ul");
-            let firstFile = null;
             for (const key in items) {
                 if (typeof items[key] === 'object' && items[key] !== null && key !== 'files') {
                     const li = document.createElement('li');
@@ -23,13 +22,11 @@ document.addEventListener("DOMContentLoaded", function () {
                         filesDiv.innerHTML = '';
                         if (items[key] && items[key].files) {
                             createFilesList(items[key].files);
-                            checkModuleCompletion(key, items[key].files); // Check if module is complete
                         }
                     };
                     li.appendChild(a);
                     li.appendChild(createMenu(items[key])); // Recursão para subdiretórios
                     ul.appendChild(li);
-                    firstFile = firstFile || (items[key].files && items[key].files[0]);
 
                     // Check if the module is already marked as complete
                     if (localStorage.getItem(key + "-module") === "completed") {
@@ -37,9 +34,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         a.innerHTML += " ✅"; // Add checkmark icon
                     }
                 }
-            }
-            if (!firstFile && ul.firstChild) {
-                ul.firstChild.firstChild.click(); // Auto click the first menu item if no files were found
             }
             return ul;
         }
@@ -125,7 +119,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 completeButton.style.display = 'none';
                 uncompleteButton.style.display = 'inline-block';
                 checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when marking a file as complete
-                updateMenu();
             };
 
             if (localStorage.getItem(file) === "completed") {
@@ -140,7 +133,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 completeButton.style.display = 'inline-block';
                 uncompleteButton.style.display = 'none';
                 checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when unmarking a file as complete
-                updateMenu();
             };
 
             if (localStorage.getItem(file) !== "completed") {
@@ -190,7 +182,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 completeButton.style.display = 'none';
                 uncompleteButton.style.display = 'inline-block';
                 checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when marking a file as complete
-                updateMenu();
             };
 
             if (localStorage.getItem(file) === "completed") {
@@ -205,7 +196,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 completeButton.style.display = 'inline-block';
                 uncompleteButton.style.display = 'none';
                 checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when unmarking a file as complete
-                updateMenu();
             };
 
             if (localStorage.getItem(file) !== "completed") {
@@ -252,7 +242,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 completeButton.style.display = 'none';
                 uncompleteButton.style.display = 'inline-block';
                 checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when marking a file as complete
-                updateMenu();
             };
 
             if (localStorage.getItem(file) === "completed") {
@@ -267,7 +256,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 completeButton.style.display = 'inline-block';
                 uncompleteButton.style.display = 'none';
                 checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when unmarking a file as complete
-                updateMenu();
             };
 
             if (localStorage.getItem(file) !== "completed") {
@@ -314,7 +302,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 completeButton.style.display = 'none';
                 uncompleteButton.style.display = 'inline-block';
                 checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when marking a file as complete
-                updateMenu();
             };
 
             if (localStorage.getItem(file) === "completed") {
@@ -329,7 +316,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 completeButton.style.display = 'inline-block';
                 uncompleteButton.style.display = 'none';
                 checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when unmarking a file as complete
-                updateMenu();
             };
 
             if (localStorage.getItem(file) !== "completed") {
@@ -364,7 +350,7 @@ document.addEventListener("DOMContentLoaded", function () {
         function updateMenu() {
             const moduleLinks = document.querySelectorAll("#menu a");
             moduleLinks.forEach(link => {
-                const moduleName = link.textContent.trim().split(" ")[0];
+                const moduleName = link.textContent.trim();
                 if (localStorage.getItem(moduleName + "-module") === "completed") {
                     link.classList.add('completed');
                     if (!link.innerHTML.includes("✅")) {
