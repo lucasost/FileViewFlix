@@ -122,14 +122,14 @@ document.addEventListener("DOMContentLoaded", function () {
             completeButton.className = "complete-button btn btn-success";
             completeButton.onclick = function () {
                 localStorage.setItem(file, "completed");
-                completeButton.disabled = true;
+                completeButton.style.display = 'none';
                 uncompleteButton.style.display = 'inline-block';
                 checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when marking a file as complete
                 updateMenu();
             };
 
             if (localStorage.getItem(file) === "completed") {
-                completeButton.disabled = true;
+                completeButton.style.display = 'none';
             }
 
             const uncompleteButton = document.createElement("button");
@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", function () {
             uncompleteButton.className = "complete-button btn btn-danger";
             uncompleteButton.onclick = function () {
                 localStorage.removeItem(file, "completed");
-                completeButton.disabled = false;
+                completeButton.style.display = 'inline-block';
                 uncompleteButton.style.display = 'none';
                 checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when unmarking a file as complete
                 updateMenu();
@@ -187,14 +187,14 @@ document.addEventListener("DOMContentLoaded", function () {
             completeButton.className = "complete-button btn btn-success";
             completeButton.onclick = function () {
                 localStorage.setItem(file, "completed");
-                completeButton.disabled = true;
+                completeButton.style.display = 'none';
                 uncompleteButton.style.display = 'inline-block';
                 checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when marking a file as complete
                 updateMenu();
             };
 
             if (localStorage.getItem(file) === "completed") {
-                completeButton.disabled = true;
+                completeButton.style.display = 'none';
             }
 
             const uncompleteButton = document.createElement("button");
@@ -202,7 +202,7 @@ document.addEventListener("DOMContentLoaded", function () {
             uncompleteButton.className = "complete-button btn btn-danger";
             uncompleteButton.onclick = function () {
                 localStorage.removeItem(file, "completed");
-                completeButton.disabled = false;
+                completeButton.style.display = 'inline-block';
                 uncompleteButton.style.display = 'none';
                 checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when unmarking a file as complete
                 updateMenu();
@@ -249,14 +249,14 @@ document.addEventListener("DOMContentLoaded", function () {
             completeButton.className = "complete-button btn btn-success";
             completeButton.onclick = function () {
                 localStorage.setItem(file, "completed");
-                completeButton.disabled = true;
+                completeButton.style.display = 'none';
                 uncompleteButton.style.display = 'inline-block';
                 checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when marking a file as complete
                 updateMenu();
             };
 
             if (localStorage.getItem(file) === "completed") {
-                completeButton.disabled = true;
+                completeButton.style.display = 'none';
             }
 
             const uncompleteButton = document.createElement("button");
@@ -264,7 +264,7 @@ document.addEventListener("DOMContentLoaded", function () {
             uncompleteButton.className = "complete-button btn btn-danger";
             uncompleteButton.onclick = function () {
                 localStorage.removeItem(file, "completed");
-                completeButton.disabled = false;
+                completeButton.style.display = 'inline-block';
                 uncompleteButton.style.display = 'none';
                 checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when unmarking a file as complete
                 updateMenu();
@@ -311,14 +311,14 @@ document.addEventListener("DOMContentLoaded", function () {
             completeButton.className = "complete-button btn btn-success";
             completeButton.onclick = function () {
                 localStorage.setItem(file, "completed");
-                completeButton.disabled = true;
+                completeButton.style.display = 'none';
                 uncompleteButton.style.display = 'inline-block';
                 checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when marking a file as complete
                 updateMenu();
             };
 
             if (localStorage.getItem(file) === "completed") {
-                completeButton.disabled = true;
+                completeButton.style.display = 'none';
             }
 
             const uncompleteButton = document.createElement("button");
@@ -326,7 +326,7 @@ document.addEventListener("DOMContentLoaded", function () {
             uncompleteButton.className = "complete-button btn btn-danger";
             uncompleteButton.onclick = function () {
                 localStorage.removeItem(file, "completed");
-                completeButton.disabled = false;
+                completeButton.style.display = 'inline-block';
                 uncompleteButton.style.display = 'none';
                 checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when unmarking a file as complete
                 updateMenu();
