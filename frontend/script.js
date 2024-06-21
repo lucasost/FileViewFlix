@@ -23,12 +23,19 @@ document.addEventListener("DOMContentLoaded", function () {
                         filesDiv.innerHTML = '';
                         if (items[key] && items[key].files) {
                             createFilesList(items[key].files);
+                            checkModuleCompletion(key, items[key].files, a); // Check if module is complete
                         }
                     };
                     li.appendChild(a);
                     li.appendChild(createMenu(items[key])); // Recursão para subdiretórios
                     ul.appendChild(li);
                     firstFile = firstFile || (items[key].files && items[key].files[0]);
+
+                    // Check if the module is already marked as complete
+                    if (localStorage.getItem(key + "-module") === "completed") {
+                        a.classList.add('completed');
+                        a.textContent += " ✅"; // Add checkmark icon
+                    }
                 }
             }
             if (!firstFile && ul.firstChild) {
@@ -116,6 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
             completeButton.onclick = function () {
                 localStorage.setItem(file, "completed");
                 completeButton.disabled = true;
+                checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when marking a file as complete
             };
 
             if (localStorage.getItem(file) === "completed") {
@@ -162,6 +170,7 @@ document.addEventListener("DOMContentLoaded", function () {
             completeButton.onclick = function () {
                 localStorage.setItem(file, "completed");
                 completeButton.disabled = true;
+                checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when marking a file as complete
             };
 
             if (localStorage.getItem(file) === "completed") {
@@ -205,6 +214,7 @@ document.addEventListener("DOMContentLoaded", function () {
             completeButton.onclick = function () {
                 localStorage.setItem(file, "completed");
                 completeButton.disabled = true;
+                checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when marking a file as complete
             };
 
             if (localStorage.getItem(file) === "completed") {
@@ -248,6 +258,7 @@ document.addEventListener("DOMContentLoaded", function () {
             completeButton.onclick = function () {
                 localStorage.setItem(file, "completed");
                 completeButton.disabled = true;
+                checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when marking a file as complete
             };
 
             if (localStorage.getItem(file) === "completed") {
@@ -259,6 +270,24 @@ document.addEventListener("DOMContentLoaded", function () {
             card.appendChild(cardBody);
             col.appendChild(card);
             parentElement.appendChild(col);
+        }
+
+        function checkModuleCompletion(moduleName, files) {
+            let allCompleted = true;
+            files.forEach(file => {
+                if (localStorage.getItem(file) !== "completed") {
+                    allCompleted = false;
+                }
+            });
+
+            if (allCompleted) {
+                localStorage.setItem(moduleName + "-module", "completed");
+                const moduleLinks = document.querySelectorAll(`#menu a:contains(${moduleName})`);
+                moduleLinks.forEach(link => {
+                    link.classList.add('completed');
+                    link.textContent += " ✅"; // Add checkmark icon
+                });
+            }
         }
 
         menu.appendChild(createMenu(data[courseName]));
