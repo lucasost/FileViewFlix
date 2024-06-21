@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         filesDiv.innerHTML = '';
                         if (items[key] && items[key].files) {
                             createFilesList(items[key].files);
-                            checkModuleCompletion(key, items[key].files, a); // Check if module is complete
+                            checkModuleCompletion(key, items[key].files); // Check if module is complete
                         }
                     };
                     li.appendChild(a);
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Check if the module is already marked as complete
                     if (localStorage.getItem(key + "-module") === "completed") {
                         a.classList.add('completed');
-                        a.textContent += " ✅"; // Add checkmark icon
+                        a.innerHTML += " ✅"; // Add checkmark icon
                     }
                 }
             }
@@ -123,14 +123,32 @@ document.addEventListener("DOMContentLoaded", function () {
             completeButton.onclick = function () {
                 localStorage.setItem(file, "completed");
                 completeButton.disabled = true;
+                uncompleteButton.style.display = 'inline-block';
                 checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when marking a file as complete
+                updateMenu();
             };
 
             if (localStorage.getItem(file) === "completed") {
                 completeButton.disabled = true;
             }
 
+            const uncompleteButton = document.createElement("button");
+            uncompleteButton.textContent = "Desmarcar Completo";
+            uncompleteButton.className = "complete-button btn btn-danger";
+            uncompleteButton.onclick = function () {
+                localStorage.removeItem(file, "completed");
+                completeButton.disabled = false;
+                uncompleteButton.style.display = 'none';
+                checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when unmarking a file as complete
+                updateMenu();
+            };
+
+            if (localStorage.getItem(file) !== "completed") {
+                uncompleteButton.style.display = 'none';
+            }
+
             cardBody.appendChild(completeButton);
+            cardBody.appendChild(uncompleteButton);
             card.appendChild(cardBody);
             col.appendChild(card);
             parentElement.appendChild(col);
@@ -170,14 +188,32 @@ document.addEventListener("DOMContentLoaded", function () {
             completeButton.onclick = function () {
                 localStorage.setItem(file, "completed");
                 completeButton.disabled = true;
+                uncompleteButton.style.display = 'inline-block';
                 checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when marking a file as complete
+                updateMenu();
             };
 
             if (localStorage.getItem(file) === "completed") {
                 completeButton.disabled = true;
             }
 
+            const uncompleteButton = document.createElement("button");
+            uncompleteButton.textContent = "Desmarcar Completo";
+            uncompleteButton.className = "complete-button btn btn-danger";
+            uncompleteButton.onclick = function () {
+                localStorage.removeItem(file, "completed");
+                completeButton.disabled = false;
+                uncompleteButton.style.display = 'none';
+                checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when unmarking a file as complete
+                updateMenu();
+            };
+
+            if (localStorage.getItem(file) !== "completed") {
+                uncompleteButton.style.display = 'none';
+            }
+
             cardBody.appendChild(completeButton);
+            cardBody.appendChild(uncompleteButton);
 
             card.appendChild(cardBody);
             col.appendChild(card);
@@ -214,14 +250,32 @@ document.addEventListener("DOMContentLoaded", function () {
             completeButton.onclick = function () {
                 localStorage.setItem(file, "completed");
                 completeButton.disabled = true;
+                uncompleteButton.style.display = 'inline-block';
                 checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when marking a file as complete
+                updateMenu();
             };
 
             if (localStorage.getItem(file) === "completed") {
                 completeButton.disabled = true;
             }
 
+            const uncompleteButton = document.createElement("button");
+            uncompleteButton.textContent = "Desmarcar Completo";
+            uncompleteButton.className = "complete-button btn btn-danger";
+            uncompleteButton.onclick = function () {
+                localStorage.removeItem(file, "completed");
+                completeButton.disabled = false;
+                uncompleteButton.style.display = 'none';
+                checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when unmarking a file as complete
+                updateMenu();
+            };
+
+            if (localStorage.getItem(file) !== "completed") {
+                uncompleteButton.style.display = 'none';
+            }
+
             cardBody.appendChild(completeButton);
+            cardBody.appendChild(uncompleteButton);
 
             card.appendChild(cardBody);
             col.appendChild(card);
@@ -258,14 +312,32 @@ document.addEventListener("DOMContentLoaded", function () {
             completeButton.onclick = function () {
                 localStorage.setItem(file, "completed");
                 completeButton.disabled = true;
+                uncompleteButton.style.display = 'inline-block';
                 checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when marking a file as complete
+                updateMenu();
             };
 
             if (localStorage.getItem(file) === "completed") {
                 completeButton.disabled = true;
             }
 
+            const uncompleteButton = document.createElement("button");
+            uncompleteButton.textContent = "Desmarcar Completo";
+            uncompleteButton.className = "complete-button btn btn-danger";
+            uncompleteButton.onclick = function () {
+                localStorage.removeItem(file, "completed");
+                completeButton.disabled = false;
+                uncompleteButton.style.display = 'none';
+                checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when unmarking a file as complete
+                updateMenu();
+            };
+
+            if (localStorage.getItem(file) !== "completed") {
+                uncompleteButton.style.display = 'none';
+            }
+
             cardBody.appendChild(completeButton);
+            cardBody.appendChild(uncompleteButton);
 
             card.appendChild(cardBody);
             col.appendChild(card);
@@ -282,19 +354,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (allCompleted) {
                 localStorage.setItem(moduleName + "-module", "completed");
-                const moduleLinks = document.querySelectorAll("#menu a");
-                moduleLinks.forEach(link => {
-                    if (link.textContent.trim().startsWith(moduleName)) {
-                        link.classList.add('completed');
-                        if (!link.textContent.includes("✅")) {
-                            link.textContent += " ✅"; // Add checkmark icon
-                        }
-                    }
-                });
+            } else {
+                localStorage.removeItem(moduleName + "-module");
             }
+
+            updateMenu();
+        }
+
+        function updateMenu() {
+            const moduleLinks = document.querySelectorAll("#menu a");
+            moduleLinks.forEach(link => {
+                const moduleName = link.textContent.trim().split(" ")[0];
+                if (localStorage.getItem(moduleName + "-module") === "completed") {
+                    link.classList.add('completed');
+                    if (!link.innerHTML.includes("✅")) {
+                        link.innerHTML += " ✅"; // Add checkmark icon
+                    }
+                } else {
+                    link.classList.remove('completed');
+                    link.innerHTML = link.innerHTML.replace(" ✅", ""); // Remove checkmark icon
+                }
+            });
         }
 
         menu.appendChild(createMenu(data[courseName]));
+        updateMenu(); // Update the menu on page load
     })
     .catch(error => {
         console.error('Error fetching files:', error);
