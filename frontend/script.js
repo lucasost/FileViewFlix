@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
+
+
+
   fetch("http://127.0.0.1:8000/files")
     .then((response) => response.json())
     .then((data) => {
@@ -7,7 +10,6 @@ document.addEventListener("DOMContentLoaded", function () {
       const courseHeader = document.getElementById("course-header");
       const courseName = Object.keys(data)[0] || "Curso Indisponível";
       courseHeader.innerHTML = "<h1>" + courseName + "</h1>";
-
       function createMenu(items) {
         const ul = document.createElement("ul");
         for (const key in items) {
@@ -48,34 +50,52 @@ document.addEventListener("DOMContentLoaded", function () {
         link.classList.add("current");
       }
 
-      function createFilesList(files) {
+      function createFilesList(files, fullPath) {
         filesDiv.innerHTML = "";
-        let videoDisplayed = false; // Flag to check if a video has been displayed
-
         const videoSection = document.createElement("div");
         videoSection.className = "row";
         const otherFilesSection = document.createElement("div");
         otherFilesSection.className = "row";
-
-        files.forEach((file) => {
-          const fileName = file.split("\\").pop();
-          if (fileName.endsWith(".mp4") && !videoDisplayed) {
-            displayVideo(file, fileName, videoSection);
-            videoDisplayed = true;
-          } else if (fileName.endsWith(".png") || fileName.endsWith(".jpg")) {
-            displayImage(file, fileName, otherFilesSection);
-          } else if (fileName.endsWith(".pdf")) {
-            displayPdf(file, fileName, otherFilesSection);
-          } else {
-            displayLink(file, fileName, otherFilesSection);
-          }
+    
+        files.forEach(file => {
+            const fileName = file.split("\\").pop();
+            const fileFullPath = `${fullPath}/${fileName}`;
+            const completed = localStorage.getItem(fileFullPath) === "completed";
+            const elementType = determineFileType(fileName);
+    
+            switch (elementType) {
+                case 'video':
+                    displayVideo(file, fileName, fullPath, videoSection, completed);
+                    break;
+                case 'image':
+                    displayImage(file, fileName, fullPath, otherFilesSection, completed);
+                    break;
+                case 'pdf':
+                    displayPdf(file, fileName, fullPath, otherFilesSection, completed);
+                    break;
+                default:
+                    displayLink(file, fileName, fullPath, otherFilesSection, completed);
+                    break;
+            }
         });
-
+    
         filesDiv.appendChild(videoSection);
         filesDiv.appendChild(otherFilesSection);
-      }
+    }
 
-      function displayVideo(file, fileName, parentElement) {
+  function determineFileType(fileName) {
+    if (fileName.endsWith(".mp4")) {
+        return 'video';
+    } else if (fileName.endsWith(".png") || fileName.endsWith(".jpg")) {
+        return 'image';
+    } else if (fileName.endsWith(".pdf")) {
+        return 'pdf';
+    } else {
+        return 'other';
+    }
+}
+
+      function displayVideo(file, fileName, fullPath,parentElement) {
         const col = document.createElement("div");
         col.className = "col-sm-12";
         const card = document.createElement("div");
@@ -150,7 +170,7 @@ document.addEventListener("DOMContentLoaded", function () {
         parentElement.appendChild(col);
       }
 
-      function displayImage(file, fileName, parentElement) {
+      function displayImage(file, fileName,fullPath, parentElement) {
         const col = document.createElement("div");
         col.className = "col-sm-4";
         const card = document.createElement("div");
@@ -214,7 +234,7 @@ document.addEventListener("DOMContentLoaded", function () {
         parentElement.appendChild(col);
       }
 
-      function displayPdf(file, fileName, parentElement) {
+      function displayPdf(file, fileName,fullPath,  parentElement) {
         const col = document.createElement("div");
         col.className = "col-sm-4";
         const card = document.createElement("div");
@@ -275,7 +295,7 @@ document.addEventListener("DOMContentLoaded", function () {
         parentElement.appendChild(col);
       }
 
-      function displayLink(file, fileName, parentElement) {
+      function displayLink(file, fileName,fullPath,  parentElement) {
         const col = document.createElement("div");
         col.className = "col-sm-4";
         const card = document.createElement("div");
