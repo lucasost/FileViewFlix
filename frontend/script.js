@@ -95,34 +95,63 @@ document.addEventListener("DOMContentLoaded", function () {
 
       function displayVideo(file, fileName, menuId, parentElement, completed) {
         const col = document.createElement("div");
-        col.className = "col-sm-12";
+        col.className = "col-sm-12 mb-3";
         const card = document.createElement("div");
         card.className = "card";
-
-        const cardHeader = document.createElement("h5");
-        cardHeader.className = "card-header";
-
+      
+        const cardHeader = document.createElement("div");
+        cardHeader.className = "card-header d-flex justify-content-between align-items-center";
+        const videoTitle = document.createElement("h5");
+        videoTitle.className = "card-title m-0";
+        videoTitle.textContent = fileName.replace(/\.[^/.]+$/, ""); 
+        cardHeader.appendChild(videoTitle);
+      
+        const completeButton = document.createElement("button");
+        completeButton.textContent = "Completo";
+        completeButton.className = "complete-button btn btn-success ml-2";
+        completeButton.onclick = function () {
+          localStorage.setItem(menuId + "-" + file, "completed");
+          completeButton.style.display = "none";
+          uncompleteButton.style.display = "inline-block";
+          checkModuleCompletion(menuId); // Check module completion when marking a file as complete
+        };
+      
+        const uncompleteButton = document.createElement("button");
+        uncompleteButton.textContent = "Desmarcar Completo";
+        uncompleteButton.className = "complete-button btn btn-danger ml-2";
+        uncompleteButton.onclick = function () {
+          localStorage.removeItem(menuId + "-" + file);
+          completeButton.style.display = "inline-block";
+          uncompleteButton.style.display = "none";
+          checkModuleCompletion(menuId); // Check module completion when unmarking a file as complete
+        };
+      
+        if (completed) {
+          completeButton.style.display = "none";
+        } else {
+          uncompleteButton.style.display = "none";
+        }
+      
+        cardHeader.appendChild(completeButton);
+        cardHeader.appendChild(uncompleteButton);
+      
         const cardBody = document.createElement("div");
         cardBody.className = "card-body";
-
-        const videoTitle = document.createElement("h5");
-        videoTitle.className = "card-title";
-        videoTitle.textContent = fileName;
-        cardHeader.appendChild(videoTitle);
-
-        const videoDescription = document.createElement("p");
-        videoDescription.className = "card-text";
-        videoDescription.textContent = "";
-        cardBody.appendChild(videoDescription);
-
+      
         const video = document.createElement("video");
         video.className = "video-test";
         video.src = file;
         video.controls = true;
         cardBody.appendChild(video);
+      
+        const br = document.createElement("br");
+        cardBody.appendChild(br);
 
+        const speedControlLabel = document.createElement("label");
+        speedControlLabel.className = "mt-2";
+        speedControlLabel.textContent = "Controle de Velocidade: ";
         const speedSelector = document.createElement("select");
-        speedSelector.className = "speed-selector";
+        speedSelector.className = "speed-selector ml-2";
         const speeds = [1, 1.5, 2, 2.5, 2.7, 2.9, 3, 3.1, 3.2, 3.3];
         speeds.forEach((speed) => {
           const option = document.createElement("option");
@@ -130,16 +159,37 @@ document.addEventListener("DOMContentLoaded", function () {
           option.textContent = `${speed}x`;
           speedSelector.appendChild(option);
         });
-
+      
         speedSelector.addEventListener("change", function () {
           video.playbackRate = parseFloat(this.value);
         });
-
+      
+        cardBody.appendChild(speedControlLabel);
         cardBody.appendChild(speedSelector);
+      
+        card.appendChild(cardHeader);
+        card.appendChild(cardBody);
+        col.appendChild(card);
+        parentElement.appendChild(col);
+      }
+      
+
+      function displayImage(file, fileName, menuId, parentElement, completed) {
+        const col = document.createElement("div");
+        col.className = "col-sm-4 mb-3";
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const cardHeader = document.createElement("div");
+        cardHeader.className = "card-header d-flex justify-content-between align-items-center";
+        const imageTitle = document.createElement("h5");
+        imageTitle.className = "card-title m-0";
+        imageTitle.textContent = fileName.replace(/\.[^/.]+$/, ""); 
+        cardHeader.appendChild(imageTitle);
 
         const completeButton = document.createElement("button");
         completeButton.textContent = "Completo";
-        completeButton.className = "complete-button btn btn-success";
+        completeButton.className = "complete-button btn btn-success ml-2";
         completeButton.onclick = function () {
           localStorage.setItem(menuId + "-" + file, "completed");
           completeButton.style.display = "none";
@@ -147,13 +197,9 @@ document.addEventListener("DOMContentLoaded", function () {
           checkModuleCompletion(menuId); // Check module completion when marking a file as complete
         };
 
-        if (completed) {
-          completeButton.style.display = "none";
-        }
-
         const uncompleteButton = document.createElement("button");
         uncompleteButton.textContent = "Desmarcar Completo";
-        uncompleteButton.className = "complete-button btn btn-danger";
+        uncompleteButton.className = "complete-button btn btn-danger ml-2";
         uncompleteButton.onclick = function () {
           localStorage.removeItem(menuId + "-" + file);
           completeButton.style.display = "inline-block";
@@ -161,35 +207,17 @@ document.addEventListener("DOMContentLoaded", function () {
           checkModuleCompletion(menuId); // Check module completion when unmarking a file as complete
         };
 
-        if (!completed) {
+        if (completed) {
+          completeButton.style.display = "none";
+        } else {
           uncompleteButton.style.display = "none";
         }
 
-        cardBody.appendChild(completeButton);
-        cardBody.appendChild(uncompleteButton);
-        card.appendChild(cardHeader);
-        card.appendChild(cardBody);
-        col.appendChild(card);
-        parentElement.appendChild(col);
-      }
+        cardHeader.appendChild(completeButton);
+        cardHeader.appendChild(uncompleteButton);
 
-      function displayImage(file, fileName, menuId, parentElement, completed) {
-        const col = document.createElement("div");
-        col.className = "col-sm-4";
-        const card = document.createElement("div");
-        card.className = "card";
         const cardBody = document.createElement("div");
         cardBody.className = "card-body";
-
-        const imageTitle = document.createElement("h5");
-        imageTitle.className = "card-title";
-        imageTitle.textContent = "Imagens";
-        cardBody.appendChild(imageTitle);
-
-        const imageDescription = document.createElement("p");
-        imageDescription.className = "card-text";
-        imageDescription.textContent = fileName;
-        cardBody.appendChild(imageDescription);
 
         const image = document.createElement("img");
         image.src = file;
@@ -201,37 +229,7 @@ document.addEventListener("DOMContentLoaded", function () {
         };
         cardBody.appendChild(image);
 
-        const completeButton = document.createElement("button");
-        completeButton.textContent = "Completo";
-        completeButton.className = "complete-button btn btn-success";
-        completeButton.onclick = function () {
-          localStorage.setItem(menuId + "-" + file, "completed");
-          completeButton.style.display = "none";
-          uncompleteButton.style.display = "inline-block";
-          checkModuleCompletion(menuId); // Check module completion when marking a file as complete
-        };
-
-        if (completed) {
-          completeButton.style.display = "none";
-        }
-
-        const uncompleteButton = document.createElement("button");
-        uncompleteButton.textContent = "Desmarcar Completo";
-        uncompleteButton.className = "complete-button btn btn-danger";
-        uncompleteButton.onclick = function () {
-          localStorage.removeItem(menuId + "-" + file);
-          completeButton.style.display = "inline-block";
-          uncompleteButton.style.display = "none";
-          checkModuleCompletion(menuId); // Check module completion when unmarking a file as complete
-        };
-
-        if (!completed) {
-          uncompleteButton.style.display = "none";
-        }
-
-        cardBody.appendChild(completeButton);
-        cardBody.appendChild(uncompleteButton);
-
+        card.appendChild(cardHeader);
         card.appendChild(cardBody);
         col.appendChild(card);
         parentElement.appendChild(col);
@@ -239,21 +237,48 @@ document.addEventListener("DOMContentLoaded", function () {
 
       function displayPdf(file, fileName, menuId, parentElement, completed) {
         const col = document.createElement("div");
-        col.className = "col-sm-4";
+        col.className = "col-sm-4 mb-3";
         const card = document.createElement("div");
         card.className = "card";
+
+        const cardHeader = document.createElement("div");
+        cardHeader.className = "card-header d-flex justify-content-between align-items-center";
+        const pdfTitle = document.createElement("h5");
+        pdfTitle.className = "card-title m-0";
+        pdfTitle.textContent =fileName.replace(/\.[^/.]+$/, ""); 
+        cardHeader.appendChild(pdfTitle);
+
+        const completeButton = document.createElement("button");
+        completeButton.textContent = "Completo";
+        completeButton.className = "complete-button btn btn-success ml-2";
+        completeButton.onclick = function () {
+          localStorage.setItem(menuId + "-" + file, "completed");
+          completeButton.style.display = "none";
+          uncompleteButton.style.display = "inline-block";
+          checkModuleCompletion(menuId); // Check module completion when marking a file as complete
+        };
+
+        const uncompleteButton = document.createElement("button");
+        uncompleteButton.textContent = "Desmarcar Completo";
+        uncompleteButton.className = "complete-button btn btn-danger ml-2";
+        uncompleteButton.onclick = function () {
+          localStorage.removeItem(menuId + "-" + file);
+          completeButton.style.display = "inline-block";
+          uncompleteButton.style.display = "none";
+          checkModuleCompletion(menuId); // Check module completion when unmarking a file as complete
+        };
+
+        if (completed) {
+          completeButton.style.display = "none";
+        } else {
+          uncompleteButton.style.display = "none";
+        }
+
+        cardHeader.appendChild(completeButton);
+        cardHeader.appendChild(uncompleteButton);
+
         const cardBody = document.createElement("div");
         cardBody.className = "card-body";
-
-        const pdfTitle = document.createElement("h5");
-        pdfTitle.className = "card-title";
-        pdfTitle.textContent = "PDFs";
-        cardBody.appendChild(pdfTitle);
-
-        const pdfDescription = document.createElement("p");
-        pdfDescription.className = "card-text";
-        pdfDescription.textContent = fileName;
-        cardBody.appendChild(pdfDescription);
 
         const link = document.createElement("a");
         link.href = file;
@@ -261,37 +286,7 @@ document.addEventListener("DOMContentLoaded", function () {
         link.className = "pdf-link";
         cardBody.appendChild(link);
 
-        const completeButton = document.createElement("button");
-        completeButton.textContent = "Completo";
-        completeButton.className = "complete-button btn btn-success";
-        completeButton.onclick = function () {
-          localStorage.setItem(menuId + "-" + file, "completed");
-          completeButton.style.display = "none";
-          uncompleteButton.style.display = "inline-block";
-          checkModuleCompletion(menuId); // Check module completion when marking a file as complete
-        };
-
-        if (completed) {
-          completeButton.style.display = "none";
-        }
-
-        const uncompleteButton = document.createElement("button");
-        uncompleteButton.textContent = "Desmarcar Completo";
-        uncompleteButton.className = "complete-button btn btn-danger";
-        uncompleteButton.onclick = function () {
-          localStorage.removeItem(menuId + "-" + file);
-          completeButton.style.display = "inline-block";
-          uncompleteButton.style.display = "none";
-          checkModuleCompletion(menuId); // Check module completion when unmarking a file as complete
-        };
-
-        if (!completed) {
-          uncompleteButton.style.display = "none";
-        }
-
-        cardBody.appendChild(completeButton);
-        cardBody.appendChild(uncompleteButton);
-
+        card.appendChild(cardHeader);
         card.appendChild(cardBody);
         col.appendChild(card);
         parentElement.appendChild(col);
@@ -299,31 +294,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
       function displayLink(file, fileName, menuId, parentElement, completed) {
         const col = document.createElement("div");
-        col.className = "col-sm-4";
+        col.className = "col-sm-4 mb-3";
         const card = document.createElement("div");
         card.className = "card";
-        const cardBody = document.createElement("div");
-        cardBody.className = "card-body";
 
+        const cardHeader = document.createElement("div");
+        cardHeader.className = "card-header d-flex justify-content-between align-items-center";
         const linkTitle = document.createElement("h5");
-        linkTitle.className = "card-title";
-        linkTitle.textContent = "Outros Arquivos";
-        cardBody.appendChild(linkTitle);
-
-        const linkDescription = document.createElement("p");
-        linkDescription.className = "card-text";
-        linkDescription.textContent = fileName;
-        cardBody.appendChild(linkDescription);
-
-        const link = document.createElement("a");
-        link.href = file;
-        link.textContent = fileName;
-        link.className = "file-link";
-        cardBody.appendChild(link);
+        linkTitle.className = "card-title m-0";
+        linkTitle.textContent = fileName.replace(/\.[^/.]+$/, ""); 
+        cardHeader.appendChild(linkTitle);
 
         const completeButton = document.createElement("button");
         completeButton.textContent = "Completo";
-        completeButton.className = "complete-button btn btn-success";
+        completeButton.className = "complete-button btn btn-success ml-2";
         completeButton.onclick = function () {
           localStorage.setItem(menuId + "-" + file, "completed");
           completeButton.style.display = "none";
@@ -331,13 +315,9 @@ document.addEventListener("DOMContentLoaded", function () {
           checkModuleCompletion(menuId); // Check module completion when marking a file as complete
         };
 
-        if (completed) {
-          completeButton.style.display = "none";
-        }
-
         const uncompleteButton = document.createElement("button");
         uncompleteButton.textContent = "Desmarcar Completo";
-        uncompleteButton.className = "complete-button btn btn-danger";
+        uncompleteButton.className = "complete-button btn btn-danger ml-2";
         uncompleteButton.onclick = function () {
           localStorage.removeItem(menuId + "-" + file);
           completeButton.style.display = "inline-block";
@@ -345,13 +325,25 @@ document.addEventListener("DOMContentLoaded", function () {
           checkModuleCompletion(menuId); // Check module completion when unmarking a file as complete
         };
 
-        if (!completed) {
+        if (completed) {
+          completeButton.style.display = "none";
+        } else {
           uncompleteButton.style.display = "none";
         }
 
-        cardBody.appendChild(completeButton);
-        cardBody.appendChild(uncompleteButton);
+        cardHeader.appendChild(completeButton);
+        cardHeader.appendChild(uncompleteButton);
 
+        const cardBody = document.createElement("div");
+        cardBody.className = "card-body";
+
+        const link = document.createElement("a");
+        link.href = file;
+        link.textContent = fileName;
+        link.className = "file-link";
+        cardBody.appendChild(link);
+
+        card.appendChild(cardHeader);
         card.appendChild(cardBody);
         col.appendChild(card);
         parentElement.appendChild(col);
