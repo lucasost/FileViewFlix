@@ -59,12 +59,12 @@ document.addEventListener("DOMContentLoaded", function () {
         otherFilesSection.className = "row";
         const audioSection = document.createElement("div");
         audioSection.className = "row";
-
+      
         files.forEach(file => {
           const fileName = file.split("\\").pop();
           const elementType = determineFileType(fileName);
           const completed = localStorage.getItem(file) === "completed";
-
+      
           switch (elementType) {
             case 'video':
               displayVideo(file, fileName, menuId, videoSection, completed);
@@ -77,22 +77,28 @@ document.addEventListener("DOMContentLoaded", function () {
               break;
             case 'audio':
               displayAudio(file, fileName, menuId, audioSection, completed);
+              break;
+            case 'html':
+            case 'text':
+              displayText(file, fileName, menuId, otherFilesSection, completed);
+              break;
             default:
               displayLink(file, fileName, menuId, otherFilesSection, completed);
               break;
           }
         });
-
+      
         filesDiv.appendChild(videoSection);
         filesDiv.appendChild(audioSection);
         filesDiv.appendChild(otherFilesSection);
       }
-
+      
       function determineFileType(fileName) {
         const videoExtensions = ['.mp4', '.avi', '.mov', '.wmv', '.flv', '.mkv', '.ts'];
         const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.svg', '.webp'];
         const pdfExtensions = ['.pdf'];
         const audioExtensions = ['.mp3', '.wav', '.ogg', '.flac', '.m4a'];
+        const textExtensions = ['.md', '.txt', '.json', '.xml', '.csv'];
       
         const extension = fileName.slice(fileName.lastIndexOf('.')).toLowerCase();
       
@@ -104,10 +110,80 @@ document.addEventListener("DOMContentLoaded", function () {
           return 'pdf';
         } else if (audioExtensions.includes(extension)) {
           return 'audio';
+        } else if (extension === '.html') {
+          return 'html';
+        } else if (textExtensions.includes(extension)) {
+          return 'text';
         } else {
           return 'other';
         }
       }
+      
+      function displayText(file, fileName, menuId, parentElement, completed) {
+        const col = document.createElement("div");
+        col.className = "col-sm-12 mb-3";
+        const card = document.createElement("div");
+        card.className = "card";
+      
+        const cardHeader = document.createElement("div");
+        cardHeader.className = "card-header d-flex justify-content-between align-items-center";
+        const textTitle = document.createElement("h5");
+        textTitle.className = "card-title m-0";
+        textTitle.textContent = fileName.replace(/\.[^/.]+$/, ""); // Remove a extensão do arquivo
+        cardHeader.appendChild(textTitle);
+      
+        const completeButton = document.createElement("button");
+        completeButton.textContent = "Completo";
+        completeButton.className = "complete-button btn btn-success ml-2";
+        completeButton.onclick = function () {
+          localStorage.setItem(menuId + "-" + file, "completed");
+          completeButton.style.display = "none";
+          uncompleteButton.style.display = "inline-block";
+          checkModuleCompletion(menuId); // Check module completion when marking a file as complete
+        };
+      
+        const uncompleteButton = document.createElement("button");
+        uncompleteButton.textContent = "Desmarcar Completo";
+        uncompleteButton.className = "complete-button btn btn-danger ml-2";
+        uncompleteButton.onclick = function () {
+          localStorage.removeItem(menuId + "-" + file);
+          completeButton.style.display = "inline-block";
+          uncompleteButton.style.display = "none";
+          checkModuleCompletion(menuId); // Check module completion when unmarking a file as complete
+        };
+      
+        if (completed) {
+          completeButton.style.display = "none";
+        } else {
+          uncompleteButton.style.display = "none";
+        }
+      
+        cardHeader.appendChild(completeButton);
+        cardHeader.appendChild(uncompleteButton);
+      
+        const cardBody = document.createElement("div");
+        cardBody.className = "card-body";
+      
+        const iframe = document.createElement("iframe");
+        iframe.src = file;
+        iframe.style.width = "100%";
+        iframe.style.height = "600px";
+        iframe.style.border = "none";
+        cardBody.appendChild(iframe);
+      
+        const link = document.createElement("a");
+        link.href = file;
+        link.textContent = "Abrir " + fileName + " em uma nova aba";
+        link.className = "file-link d-block mt-2";
+        link.target = "_blank"; // Abre o arquivo em uma nova aba
+        cardBody.appendChild(link);
+      
+        card.appendChild(cardHeader);
+        card.appendChild(cardBody);
+        col.appendChild(card);
+        parentElement.appendChild(col);
+      }
+      
 
       function displayAudio(file, fileName, menuId, parentElement, completed) {
         const col = document.createElement("div");
