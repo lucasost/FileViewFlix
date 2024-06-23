@@ -50,12 +50,15 @@ document.addEventListener("DOMContentLoaded", function () {
         link.classList.add("current");
       }
 
+      
       function createFilesList(files, menuId) {
         filesDiv.innerHTML = "";
         const videoSection = document.createElement("div");
         videoSection.className = "row";
         const otherFilesSection = document.createElement("div");
         otherFilesSection.className = "row";
+        const audioSection = document.createElement("div");
+        audioSection.className = "row";
 
         files.forEach(file => {
           const fileName = file.split("\\").pop();
@@ -72,6 +75,8 @@ document.addEventListener("DOMContentLoaded", function () {
             case 'pdf':
               displayPdf(file, fileName, menuId, otherFilesSection, completed);
               break;
+            case 'audio':
+              displayAudio(file, fileName, menuId, audioSection, completed);
             default:
               displayLink(file, fileName, menuId, otherFilesSection, completed);
               break;
@@ -79,19 +84,86 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         filesDiv.appendChild(videoSection);
+        filesDiv.appendChild(audioSection);
         filesDiv.appendChild(otherFilesSection);
       }
 
       function determineFileType(fileName) {
-        if (fileName.endsWith(".mp4")) {
+        const videoExtensions = ['.mp4', '.avi', '.mov', '.wmv', '.flv', '.mkv', '.ts'];
+        const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.svg', '.webp'];
+        const pdfExtensions = ['.pdf'];
+        const audioExtensions = ['.mp3', '.wav', '.ogg', '.flac', '.m4a'];
+      
+        const extension = fileName.slice(fileName.lastIndexOf('.')).toLowerCase();
+      
+        if (videoExtensions.includes(extension)) {
           return 'video';
-        } else if (fileName.endsWith(".png") || fileName.endsWith(".jpg")) {
+        } else if (imageExtensions.includes(extension)) {
           return 'image';
-        } else if (fileName.endsWith(".pdf")) {
+        } else if (pdfExtensions.includes(extension)) {
           return 'pdf';
+        } else if (audioExtensions.includes(extension)) {
+          return 'audio';
         } else {
           return 'other';
         }
+      }
+
+      function displayAudio(file, fileName, menuId, parentElement, completed) {
+        const col = document.createElement("div");
+        col.className = "col-sm-12 mb-3";
+        const card = document.createElement("div");
+        card.className = "card";
+      
+        const cardHeader = document.createElement("div");
+        cardHeader.className = "card-header d-flex justify-content-between align-items-center";
+        const audioTitle = document.createElement("h5");
+        audioTitle.className = "card-title m-0";
+        audioTitle.textContent = fileName.replace(/\.[^/.]+$/, ""); // Remove a extensão do arquivo
+        cardHeader.appendChild(audioTitle);
+      
+        const completeButton = document.createElement("button");
+        completeButton.textContent = "Completo";
+        completeButton.className = "complete-button btn btn-success ml-2";
+        completeButton.onclick = function () {
+          localStorage.setItem(menuId + "-" + file, "completed");
+          completeButton.style.display = "none";
+          uncompleteButton.style.display = "inline-block";
+          checkModuleCompletion(menuId); // Check module completion when marking a file as complete
+        };
+      
+        const uncompleteButton = document.createElement("button");
+        uncompleteButton.textContent = "Desmarcar Completo";
+        uncompleteButton.className = "complete-button btn btn-danger ml-2";
+        uncompleteButton.onclick = function () {
+          localStorage.removeItem(menuId + "-" + file);
+          completeButton.style.display = "inline-block";
+          uncompleteButton.style.display = "none";
+          checkModuleCompletion(menuId); // Check module completion when unmarking a file as complete
+        };
+      
+        if (completed) {
+          completeButton.style.display = "none";
+        } else {
+          uncompleteButton.style.display = "none";
+        }
+      
+        cardHeader.appendChild(completeButton);
+        cardHeader.appendChild(uncompleteButton);
+      
+        const cardBody = document.createElement("div");
+        cardBody.className = "card-body";
+      
+        const audio = document.createElement("audio");
+        audio.className = "audio-test";
+        audio.src = file;
+        audio.controls = true;
+        cardBody.appendChild(audio);
+      
+        card.appendChild(cardHeader);
+        card.appendChild(cardBody);
+        col.appendChild(card);
+        parentElement.appendChild(col);
       }
 
       function displayVideo(file, fileName, menuId, parentElement, completed) {
