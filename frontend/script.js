@@ -1,7 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-
-
-
   fetch("http://127.0.0.1:8000/files")
     .then((response) => response.json())
     .then((data) => {
@@ -10,6 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const courseHeader = document.getElementById("course-header");
       const courseName = Object.keys(data)[0] || "Curso Indisponível";
       courseHeader.innerHTML = "<h1>" + courseName + "</h1>";
+
       function createMenu(items) {
         const ul = document.createElement("ul");
         for (const key in items) {
@@ -22,12 +20,13 @@ document.addEventListener("DOMContentLoaded", function () {
             const a = document.createElement("a");
             a.textContent = key;
             a.href = "#";
+            a.dataset.menuId = items[key].MenuId;
             a.onclick = (event) => {
               event.preventDefault();
               updateCurrent(event.target);
               filesDiv.innerHTML = "";
               if (items[key] && items[key].files) {
-                createFilesList(items[key].files);
+                createFilesList(items[key].files, items[key].MenuId);
               }
             };
             li.appendChild(a);
@@ -35,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
             ul.appendChild(li);
 
             // Check if the module is already marked as complete
-            if (localStorage.getItem(key + "-module") === "completed") {
+            if (localStorage.getItem(items[key].MenuId + "-module") === "completed") {
               a.classList.add("completed");
               a.innerHTML += " ✅"; // Add checkmark icon
             }
@@ -50,67 +49,70 @@ document.addEventListener("DOMContentLoaded", function () {
         link.classList.add("current");
       }
 
-      function createFilesList(files, fullPath) {
+      function createFilesList(files, menuId) {
         filesDiv.innerHTML = "";
         const videoSection = document.createElement("div");
         videoSection.className = "row";
         const otherFilesSection = document.createElement("div");
         otherFilesSection.className = "row";
-    
+
         files.forEach(file => {
-            const fileName = file.split("\\").pop();
-            const fileFullPath = `${fullPath}/${fileName}`;
-            const completed = localStorage.getItem(fileFullPath) === "completed";
-            const elementType = determineFileType(fileName);
-    
-            switch (elementType) {
-                case 'video':
-                    displayVideo(file, fileName, fullPath, videoSection, completed);
-                    break;
-                case 'image':
-                    displayImage(file, fileName, fullPath, otherFilesSection, completed);
-                    break;
-                case 'pdf':
-                    displayPdf(file, fileName, fullPath, otherFilesSection, completed);
-                    break;
-                default:
-                    displayLink(file, fileName, fullPath, otherFilesSection, completed);
-                    break;
-            }
+          const fileName = file.split("\\").pop();
+          const elementType = determineFileType(fileName);
+          const completed = localStorage.getItem(file) === "completed";
+
+          switch (elementType) {
+            case 'video':
+              displayVideo(file, fileName, menuId, videoSection, completed);
+              break;
+            case 'image':
+              displayImage(file, fileName, menuId, otherFilesSection, completed);
+              break;
+            case 'pdf':
+              displayPdf(file, fileName, menuId, otherFilesSection, completed);
+              break;
+            default:
+              displayLink(file, fileName, menuId, otherFilesSection, completed);
+              break;
+          }
         });
-    
+
         filesDiv.appendChild(videoSection);
         filesDiv.appendChild(otherFilesSection);
-    }
+      }
 
-  function determineFileType(fileName) {
-    if (fileName.endsWith(".mp4")) {
-        return 'video';
-    } else if (fileName.endsWith(".png") || fileName.endsWith(".jpg")) {
-        return 'image';
-    } else if (fileName.endsWith(".pdf")) {
-        return 'pdf';
-    } else {
-        return 'other';
-    }
-}
+      function determineFileType(fileName) {
+        if (fileName.endsWith(".mp4")) {
+          return 'video';
+        } else if (fileName.endsWith(".png") || fileName.endsWith(".jpg")) {
+          return 'image';
+        } else if (fileName.endsWith(".pdf")) {
+          return 'pdf';
+        } else {
+          return 'other';
+        }
+      }
 
-      function displayVideo(file, fileName, fullPath,parentElement) {
+      function displayVideo(file, fileName, menuId, parentElement, completed) {
         const col = document.createElement("div");
         col.className = "col-sm-12";
         const card = document.createElement("div");
         card.className = "card";
+
+        const cardHeader = document.createElement("h5");
+        cardHeader.className = "card-header";
+
         const cardBody = document.createElement("div");
         cardBody.className = "card-body";
 
         const videoTitle = document.createElement("h5");
         videoTitle.className = "card-title";
-        videoTitle.textContent = "Vídeos";
-        cardBody.appendChild(videoTitle);
+        videoTitle.textContent = fileName;
+        cardHeader.appendChild(videoTitle);
 
         const videoDescription = document.createElement("p");
         videoDescription.className = "card-text";
-        videoDescription.textContent = fileName;
+        videoDescription.textContent = "";
         cardBody.appendChild(videoDescription);
 
         const video = document.createElement("video");
@@ -139,13 +141,13 @@ document.addEventListener("DOMContentLoaded", function () {
         completeButton.textContent = "Completo";
         completeButton.className = "complete-button btn btn-success";
         completeButton.onclick = function () {
-          localStorage.setItem(file, "completed");
+          localStorage.setItem(menuId + "-" + file, "completed");
           completeButton.style.display = "none";
           uncompleteButton.style.display = "inline-block";
-          checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when marking a file as complete
+          checkModuleCompletion(menuId); // Check module completion when marking a file as complete
         };
 
-        if (localStorage.getItem(file) === "completed") {
+        if (completed) {
           completeButton.style.display = "none";
         }
 
@@ -153,24 +155,25 @@ document.addEventListener("DOMContentLoaded", function () {
         uncompleteButton.textContent = "Desmarcar Completo";
         uncompleteButton.className = "complete-button btn btn-danger";
         uncompleteButton.onclick = function () {
-          localStorage.removeItem(file, "completed");
+          localStorage.removeItem(menuId + "-" + file);
           completeButton.style.display = "inline-block";
           uncompleteButton.style.display = "none";
-          checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when unmarking a file as complete
+          checkModuleCompletion(menuId); // Check module completion when unmarking a file as complete
         };
 
-        if (localStorage.getItem(file) !== "completed") {
+        if (!completed) {
           uncompleteButton.style.display = "none";
         }
 
         cardBody.appendChild(completeButton);
         cardBody.appendChild(uncompleteButton);
+        card.appendChild(cardHeader);
         card.appendChild(cardBody);
         col.appendChild(card);
         parentElement.appendChild(col);
       }
 
-      function displayImage(file, fileName,fullPath, parentElement) {
+      function displayImage(file, fileName, menuId, parentElement, completed) {
         const col = document.createElement("div");
         col.className = "col-sm-4";
         const card = document.createElement("div");
@@ -202,13 +205,13 @@ document.addEventListener("DOMContentLoaded", function () {
         completeButton.textContent = "Completo";
         completeButton.className = "complete-button btn btn-success";
         completeButton.onclick = function () {
-          localStorage.setItem(file, "completed");
+          localStorage.setItem(menuId + "-" + file, "completed");
           completeButton.style.display = "none";
           uncompleteButton.style.display = "inline-block";
-          checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when marking a file as complete
+          checkModuleCompletion(menuId); // Check module completion when marking a file as complete
         };
 
-        if (localStorage.getItem(file) === "completed") {
+        if (completed) {
           completeButton.style.display = "none";
         }
 
@@ -216,13 +219,13 @@ document.addEventListener("DOMContentLoaded", function () {
         uncompleteButton.textContent = "Desmarcar Completo";
         uncompleteButton.className = "complete-button btn btn-danger";
         uncompleteButton.onclick = function () {
-          localStorage.removeItem(file, "completed");
+          localStorage.removeItem(menuId + "-" + file);
           completeButton.style.display = "inline-block";
           uncompleteButton.style.display = "none";
-          checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when unmarking a file as complete
+          checkModuleCompletion(menuId); // Check module completion when unmarking a file as complete
         };
 
-        if (localStorage.getItem(file) !== "completed") {
+        if (!completed) {
           uncompleteButton.style.display = "none";
         }
 
@@ -234,7 +237,7 @@ document.addEventListener("DOMContentLoaded", function () {
         parentElement.appendChild(col);
       }
 
-      function displayPdf(file, fileName,fullPath,  parentElement) {
+      function displayPdf(file, fileName, menuId, parentElement, completed) {
         const col = document.createElement("div");
         col.className = "col-sm-4";
         const card = document.createElement("div");
@@ -262,14 +265,13 @@ document.addEventListener("DOMContentLoaded", function () {
         completeButton.textContent = "Completo";
         completeButton.className = "complete-button btn btn-success";
         completeButton.onclick = function () {
-          debugger;
-          localStorage.setItem(file, "completed");
+          localStorage.setItem(menuId + "-" + file, "completed");
           completeButton.style.display = "none";
           uncompleteButton.style.display = "inline-block";
-          checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when marking a file as complete
+          checkModuleCompletion(menuId); // Check module completion when marking a file as complete
         };
 
-        if (localStorage.getItem(file) === "completed") {
+        if (completed) {
           completeButton.style.display = "none";
         }
 
@@ -277,13 +279,13 @@ document.addEventListener("DOMContentLoaded", function () {
         uncompleteButton.textContent = "Desmarcar Completo";
         uncompleteButton.className = "complete-button btn btn-danger";
         uncompleteButton.onclick = function () {
-          localStorage.removeItem(file, "completed");
+          localStorage.removeItem(menuId + "-" + file);
           completeButton.style.display = "inline-block";
           uncompleteButton.style.display = "none";
-          checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when unmarking a file as complete
+          checkModuleCompletion(menuId); // Check module completion when unmarking a file as complete
         };
 
-        if (localStorage.getItem(file) !== "completed") {
+        if (!completed) {
           uncompleteButton.style.display = "none";
         }
 
@@ -295,7 +297,7 @@ document.addEventListener("DOMContentLoaded", function () {
         parentElement.appendChild(col);
       }
 
-      function displayLink(file, fileName,fullPath,  parentElement) {
+      function displayLink(file, fileName, menuId, parentElement, completed) {
         const col = document.createElement("div");
         col.className = "col-sm-4";
         const card = document.createElement("div");
@@ -323,13 +325,13 @@ document.addEventListener("DOMContentLoaded", function () {
         completeButton.textContent = "Completo";
         completeButton.className = "complete-button btn btn-success";
         completeButton.onclick = function () {
-          localStorage.setItem(file, "completed");
+          localStorage.setItem(menuId + "-" + file, "completed");
           completeButton.style.display = "none";
           uncompleteButton.style.display = "inline-block";
-          checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when marking a file as complete
+          checkModuleCompletion(menuId); // Check module completion when marking a file as complete
         };
 
-        if (localStorage.getItem(file) === "completed") {
+        if (completed) {
           completeButton.style.display = "none";
         }
 
@@ -337,13 +339,13 @@ document.addEventListener("DOMContentLoaded", function () {
         uncompleteButton.textContent = "Desmarcar Completo";
         uncompleteButton.className = "complete-button btn btn-danger";
         uncompleteButton.onclick = function () {
-          localStorage.removeItem(file, "completed");
+          localStorage.removeItem(menuId + "-" + file);
           completeButton.style.display = "inline-block";
           uncompleteButton.style.display = "none";
-          checkModuleCompletion(fileName.split("\\")[1], [file]); // Check module completion when unmarking a file as complete
+          checkModuleCompletion(menuId); // Check module completion when unmarking a file as complete
         };
 
-        if (localStorage.getItem(file) !== "completed") {
+        if (!completed) {
           uncompleteButton.style.display = "none";
         }
 
@@ -355,73 +357,63 @@ document.addEventListener("DOMContentLoaded", function () {
         parentElement.appendChild(col);
       }
 
-      function checkModuleCompletion() {
-        const moduleLinks = document.querySelectorAll("#menu a");
-        moduleLinks.forEach(link => {
-            const moduleKey = link.textContent.trim();
-            const { files, moduleNameFound } = getFilesForModule(moduleKey, data[courseName]);
-            console.log("checkModuleCompletion")
-            console.log("moduleKey: " + moduleKey)
-            console.log("moduleNameFound: " + moduleNameFound)
-            let allCompleted = true;
-            files.forEach(file => {
-                if (localStorage.getItem(file) !== "completed") {
-                    allCompleted = false;
-                }
-            });
-    
-            if (allCompleted) {
-                localStorage.setItem(moduleNameFound + "-module", "completed");
-            } else {
-                localStorage.removeItem(moduleNameFound + "-module");
-            }
-            updateMenu();  // Ensure we call updateMenu here to reflect changes immediately
+      function checkModuleCompletion(menuId) {
+        const { files } = getFilesForModuleById(menuId, data[courseName]);
+        let allCompleted = true;
+        files.forEach(file => {
+          if (localStorage.getItem(menuId + "-" + file) !== "completed") {
+            allCompleted = false;
+          }
         });
-    }
 
-    function getFilesForModule(moduleName, items) {
-        let files = [];
-        let moduleNameFound = moduleName; // Assume the moduleName passed is correct if not overridden
-    
-        for (const key in items) {
-            if (key === moduleName) {
-                if (items[key].files) {
-                    files = items[key].files.slice(); // Use slice to copy the array
-                }
-                Object.keys(items[key]).forEach(subKey => {
-                    if (typeof items[key][subKey] === 'object' && items[key][subKey] !== null && subKey !== 'files') {
-                        const result = getFilesForModule(subKey, items[key]);
-                        files = files.concat(result.files);
-                        moduleNameFound = result.moduleNameFound || moduleNameFound;
-                    }
-                });
-            } else if (typeof items[key] === 'object' && items[key] !== null) {
-                const result = getFilesForModule(moduleName, items[key]);
-                files = files.concat(result.files);
-                moduleNameFound = result.moduleNameFound || moduleNameFound;
-            }
+        if (allCompleted) {
+          localStorage.setItem(menuId + "-module", "completed");
+        } else {
+          localStorage.removeItem(menuId + "-module");
         }
-        return { files, moduleNameFound };
-    }
+        updateMenu();
+      }
 
+      function getFilesForModuleById(menuId, items) {
+        let files = [];
 
-    function updateMenu() {
+        for (const key in items) {
+          if (items[key].MenuId === menuId) {
+            if (items[key].files) {
+              files = items[key].files.slice(); // Use slice to copy the array
+            }
+            Object.keys(items[key]).forEach(subKey => {
+              if (typeof items[key][subKey] === 'object' && items[key][subKey] !== null && subKey !== 'files') {
+                const result = getFilesForModuleById(menuId, items[key]);
+                files = files.concat(result.files);
+              }
+            });
+            break; // Stop searching once we found the module by ID
+          } else if (typeof items[key] === 'object' && items[key] !== null) {
+            const result = getFilesForModuleById(menuId, items[key]);
+            files = files.concat(result.files);
+          }
+        }
+        return { files };
+      }
+
+      function updateMenu() {
         const moduleLinks = document.querySelectorAll("#menu a");
         moduleLinks.forEach(link => {
-            const moduleName = link.textContent.trim();
-            if (localStorage.getItem(moduleName + "-module") === "completed") {
-                link.classList.add('completed');
-                if (!link.innerHTML.includes(" ✅")) {
-                    link.innerHTML += " ✅";
-                }
-            } else {
-                link.classList.remove('completed');
-                link.innerHTML = link.textContent.trim();
+          const menuId = link.dataset.menuId;
+          if (localStorage.getItem(menuId + "-module") === "completed") {
+            link.classList.add('completed');
+            if (!link.innerHTML.includes(" ✅")) {
+              link.innerHTML += " ✅";
             }
-            console.log("Updating menu for:", moduleName, "Completed:", localStorage.getItem(moduleName + "-module"));
+          } else {
+            link.classList.remove('completed');
+            link.innerHTML = link.textContent.trim();
+          }
+          console.log("Updating menu for:", menuId, "Completed:", localStorage.getItem(menuId + "-module"));
         });
-    }
-    
+      }
+
       menu.appendChild(createMenu(data[courseName]));
       updateMenu(); // Update the menu on page load
     })
