@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 CORS(app)  # Aplica CORS para todas as rotas e origens
 
-DIR_PATH = os.environ.get('DIR_PATH', 'D:\Torrents\Curso_-_Desenvolvimento_para_Iniciantes_com_C#')
+DIR_PATH = os.environ.get('DIR_PATH', 'D:\CaminhoArquivoCurso')
 
 @app.route('/')
 def home():
