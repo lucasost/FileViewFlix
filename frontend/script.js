@@ -14,7 +14,8 @@ document.addEventListener("DOMContentLoaded", function () {
           if (
             typeof items[key] === "object" &&
             items[key] !== null &&
-            key !== "files"
+            key !== "files" &&
+            key !== "MenuId"
           ) {
             const li = document.createElement("li");
             const a = document.createElement("a");
@@ -98,14 +99,14 @@ document.addEventListener("DOMContentLoaded", function () {
         col.className = "col-sm-12 mb-3";
         const card = document.createElement("div");
         card.className = "card";
-      
+
         const cardHeader = document.createElement("div");
         cardHeader.className = "card-header d-flex justify-content-between align-items-center";
         const videoTitle = document.createElement("h5");
         videoTitle.className = "card-title m-0";
-        videoTitle.textContent = fileName.replace(/\.[^/.]+$/, ""); 
+        videoTitle.textContent = fileName.replace(/\.[^/.]+$/, ""); // Remove a extensão do arquivo
         cardHeader.appendChild(videoTitle);
-      
+
         const completeButton = document.createElement("button");
         completeButton.textContent = "Completo";
         completeButton.className = "complete-button btn btn-success ml-2";
@@ -115,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function () {
           uncompleteButton.style.display = "inline-block";
           checkModuleCompletion(menuId); // Check module completion when marking a file as complete
         };
-      
+
         const uncompleteButton = document.createElement("button");
         uncompleteButton.textContent = "Desmarcar Completo";
         uncompleteButton.className = "complete-button btn btn-danger ml-2";
@@ -125,25 +126,26 @@ document.addEventListener("DOMContentLoaded", function () {
           uncompleteButton.style.display = "none";
           checkModuleCompletion(menuId); // Check module completion when unmarking a file as complete
         };
-      
+
         if (completed) {
           completeButton.style.display = "none";
         } else {
           uncompleteButton.style.display = "none";
         }
-      
+
         cardHeader.appendChild(completeButton);
         cardHeader.appendChild(uncompleteButton);
-      
+
         const cardBody = document.createElement("div");
         cardBody.className = "card-body";
-      
+
         const video = document.createElement("video");
         video.className = "video-test";
         video.src = file;
         video.controls = true;
         cardBody.appendChild(video);
-      
+
+        // Adicionando a quebra de linha
         const br = document.createElement("br");
         cardBody.appendChild(br);
 
@@ -159,24 +161,23 @@ document.addEventListener("DOMContentLoaded", function () {
           option.textContent = `${speed}x`;
           speedSelector.appendChild(option);
         });
-      
+
         speedSelector.addEventListener("change", function () {
           video.playbackRate = parseFloat(this.value);
         });
-      
+
         cardBody.appendChild(speedControlLabel);
         cardBody.appendChild(speedSelector);
-      
+
         card.appendChild(cardHeader);
         card.appendChild(cardBody);
         col.appendChild(card);
         parentElement.appendChild(col);
       }
-      
 
       function displayImage(file, fileName, menuId, parentElement, completed) {
         const col = document.createElement("div");
-        col.className = "col-sm-4 mb-3";
+        col.className = "col-sm-12 mb-3";
         const card = document.createElement("div");
         card.className = "card";
 
@@ -184,7 +185,7 @@ document.addEventListener("DOMContentLoaded", function () {
         cardHeader.className = "card-header d-flex justify-content-between align-items-center";
         const imageTitle = document.createElement("h5");
         imageTitle.className = "card-title m-0";
-        imageTitle.textContent = fileName.replace(/\.[^/.]+$/, ""); 
+        imageTitle.textContent = fileName.replace(/\.[^/.]+$/, ""); // Remove a extensão do arquivo
         cardHeader.appendChild(imageTitle);
 
         const completeButton = document.createElement("button");
@@ -229,6 +230,10 @@ document.addEventListener("DOMContentLoaded", function () {
         };
         cardBody.appendChild(image);
 
+        // Adicionando a quebra de linha
+        const br = document.createElement("br");
+        cardBody.appendChild(br);
+
         card.appendChild(cardHeader);
         card.appendChild(cardBody);
         col.appendChild(card);
@@ -237,7 +242,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       function displayPdf(file, fileName, menuId, parentElement, completed) {
         const col = document.createElement("div");
-        col.className = "col-sm-4 mb-3";
+        col.className = "col-sm-12 mb-3";
         const card = document.createElement("div");
         card.className = "card";
 
@@ -245,7 +250,7 @@ document.addEventListener("DOMContentLoaded", function () {
         cardHeader.className = "card-header d-flex justify-content-between align-items-center";
         const pdfTitle = document.createElement("h5");
         pdfTitle.className = "card-title m-0";
-        pdfTitle.textContent =fileName.replace(/\.[^/.]+$/, ""); 
+        pdfTitle.textContent = fileName.replace(/\.[^/.]+$/, ""); // Remove a extensão do arquivo
         cardHeader.appendChild(pdfTitle);
 
         const completeButton = document.createElement("button");
@@ -284,7 +289,12 @@ document.addEventListener("DOMContentLoaded", function () {
         link.href = file;
         link.textContent = fileName;
         link.className = "pdf-link";
+        link.target = "_blank"; // Abre o PDF em uma nova aba
         cardBody.appendChild(link);
+
+        // Adicionando a quebra de linha
+        const br = document.createElement("br");
+        cardBody.appendChild(br);
 
         card.appendChild(cardHeader);
         card.appendChild(cardBody);
@@ -294,7 +304,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       function displayLink(file, fileName, menuId, parentElement, completed) {
         const col = document.createElement("div");
-        col.className = "col-sm-4 mb-3";
+        col.className = "col-sm-12 mb-3";
         const card = document.createElement("div");
         card.className = "card";
 
@@ -302,7 +312,7 @@ document.addEventListener("DOMContentLoaded", function () {
         cardHeader.className = "card-header d-flex justify-content-between align-items-center";
         const linkTitle = document.createElement("h5");
         linkTitle.className = "card-title m-0";
-        linkTitle.textContent = fileName.replace(/\.[^/.]+$/, ""); 
+        linkTitle.textContent = fileName.replace(/\.[^/.]+$/, ""); // Remove a extensão do arquivo
         cardHeader.appendChild(linkTitle);
 
         const completeButton = document.createElement("button");
@@ -341,7 +351,12 @@ document.addEventListener("DOMContentLoaded", function () {
         link.href = file;
         link.textContent = fileName;
         link.className = "file-link";
+        link.target = "_blank"; // Abre outros arquivos em uma nova aba
         cardBody.appendChild(link);
+
+        // Adicionando a quebra de linha
+        const br = document.createElement("br");
+        cardBody.appendChild(br);
 
         card.appendChild(cardHeader);
         card.appendChild(cardBody);

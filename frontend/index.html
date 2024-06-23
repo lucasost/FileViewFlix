@@ -1,112 +1,42 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CursoTeste</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-      }
-      #menu {
-        float: left;
-        width: 20%;
-        padding: 0;
-        margin: 0;
-      }
-      #files {
-        margin-left: 22%;
-        width: 75%;
-      }
-      ul,
-      div.list-group {
-        list-style: none;
-        padding: 0;
-      }
-      li,
-      a.list-group-item {
-        padding: 8px;
-        margin-left: 20px;
-      }
-      .current {
-        color: red;
-        font-weight: bold;
-      }
-      .video-container,
-      .thumbnail,
-      .pdf-link {
-        margin-bottom: 10px;
-      }
 
-      .video-container video,
-      .img-thumbnail,
-      iframe {
-        width: 500px;
-        height: auto;
-      }
-      .thumbnail {
-        width: 100px; /* Ajuste conforme necessário */
-      }
-      .speed-selector {
-        margin-top: 5px;
-      }
-      .complete-button {
-        margin-top: 5px;
-      }
-      .video-container,
-      .thumbnail,
-      .pdf-link {
-        margin-bottom: 10px; /* Espaçamento entre elementos */
-      }
-      .video-container {
-        max-width: 640px; /* Limita o tamanho máximo do vídeo */
-      }
-      .video-title {
-        font-size: 18px;
-        margin-bottom: 5px;
-      }
-      .video-test {
-        width: 800px;
-      }
-    </style>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  </head>
-  <body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NOME DO DIRETORIO</title>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+  <div class="container">
     <div id="course-header"></div>
     <div id="menu"></div>
     <div id="files"></div>
+  </div>
 
-    <div
-      class="modal fade"
-      id="imageModal"
-      tabindex="-1"
-      aria-labelledby="imageModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="imageModalLabel">Imagem</h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <img id="modalImage" src="" alt="Imagem" class="img-fluid" />
-          </div>
+  <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="imageModalLabel">Imagem</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <img id="modalImage" src="" alt="Imagem" class="img-fluid" />
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- JavaScript e Bootstrap -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="./script.js"></script>
-  </body>
+  <!-- JavaScript e Bootstrap -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="./script.js"></script>
+</body>
+
 </html>
